@@ -25,7 +25,7 @@ export const createTask = catchAsyncErrors(async (req, res, next) => {
 
 export const getSingleTask = catchAsyncErrors(async (req, res, next) => {
   const { id } = req.params;
-  const task = await Task.findOne({ _id: id });
+  const task = await Task.findById(id);
   if (!task) {
     return next(new ErrorHandler("Oops! Task Not Found.", 404));
   }
@@ -36,9 +36,7 @@ export const getSingleTask = catchAsyncErrors(async (req, res, next) => {
 });
 
 export const getTask = catchAsyncErrors(async (req, res, next) => {
-  console.log("Fetching all tasks..."); // Log when the function is called
-  const tasks = await Task.find({});
-  console.log("Fetched tasks:", tasks); // Log the fetched tasks
+  const tasks = await Task.find({ createdBy: req.user });
 
   res.status(200).json({
     success: true,
@@ -53,9 +51,7 @@ export const deleteTask = catchAsyncErrors(async (req, res, next) => {
   if (!task) {
     return next(new ErrorHandler("Task Not Found.", 404));
   }
-  if (task.createdBy.toString() !== req.user._id.toString()) {
-    return next(new ErrorHandler("You Are Not Authenticated.", 403));
-  }
+
   await task.deleteOne();
   res.status(200).json({
     success: true,
@@ -72,7 +68,7 @@ export const updateTask = catchAsyncErrors(async (req, res, next) => {
     priority: req.body.priority,
   };
 
-  const task = await Task.findOneAndUpdate({ _id: id, createdBy: req.user._id }, updateTaskData, {
+  const task = await Task.findByIdAndUpdate(id, updateTaskData, {
     new: true,
     runValidators: true,
     useFindAndModify: false,

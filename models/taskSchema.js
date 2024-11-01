@@ -2,7 +2,11 @@ import moment from "moment";
 import mongoose from "mongoose";
 
 const taskSchema = new mongoose.Schema({
-
+  createdBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
   title: {
     type: String,
     required: [true, "Task Title Is Mandatory."],

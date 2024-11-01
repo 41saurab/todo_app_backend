@@ -5,13 +5,9 @@ import { isAuthenticated } from "../middlewares/auth.js";
 const taskRouter = express.Router();
 
 taskRouter.post("/addtask", isAuthenticated, createTask);
-
-taskRouter.get("/:id", isAuthenticated, getSingleTask);
-
-taskRouter.get("/alltasks", isAuthenticated, getTask); // Changed to /alltasks
-
+taskRouter.get("/get/:id", isAuthenticated, getSingleTask);
 taskRouter.delete("/delete/:id", isAuthenticated, deleteTask);
-
 taskRouter.put("/update/:id", isAuthenticated, updateTask);
+taskRouter.get("/alltasks", isAuthenticated, getTask);
 
 export default taskRouter;
